@@ -1,0 +1,30 @@
+{
+  "name": "FerrisKey",
+  "dockerComposeFile": "compose.yaml",
+  "service": "dev",
+  "workspaceFolder": "/workspaces/ferriskey",
+  "remoteUser": "vscode",
+  "shutdownAction": "stopCompose",
+  "features": {
+    "ghcr.io/devcontainers/features/node:2": {
+      "version": "26",
+      "pnpmVersion": "10.34.7"
+    }
+  },
+  "forwardPorts": [3333, 5555],
+  "portsAttributes": {
+    "3333": { "label": "FerrisKey API" },
+    "5555": { "label": "FerrisKey console" }
+  },
+  "postCreateCommand": "sqlx migrate run --source core/migrations && pnpm --dir front install --frozen-lockfile",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "rust-lang.rust-analyzer",
+        "vadimcn.vscode-lldb",
+        "tamasfe.even-better-toml",
+        "dbaeumer.vscode-eslint"
+      ]
+    }
+  }
+}

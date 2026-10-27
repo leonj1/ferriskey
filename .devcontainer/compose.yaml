@@ -1,0 +1,41 @@
+services:
+  dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ..:/workspaces/ferriskey:cached
+    working_dir: /workspaces/ferriskey
+    command: sleep infinity
+    environment:
+      DATABASE_HOST: db
+      DATABASE_PORT: "5432"
+      DATABASE_NAME: ferriskey
+      DATABASE_USER: ferriskey
+      DATABASE_PASSWORD: ferriskey
+      DATABASE_URL: postgres://ferriskey:ferriskey@db:5432/ferriskey
+      SERVER_HOST: 0.0.0.0
+      SERVER_PORT: "3333"
+      WEBAPP_URL: http://localhost:5555
+      ALLOWED_ORIGINS: http://localhost:5555,http://127.0.0.1:5555
+      VITE_API_URL: http://localhost:3333
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:18.2
+    environment:
+      POSTGRES_USER: ferriskey
+      POSTGRES_PASSWORD: ferriskey
+      POSTGRES_DB: ferriskey
+    volumes:
+      - pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ferriskey -d ferriskey"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  pgdata:

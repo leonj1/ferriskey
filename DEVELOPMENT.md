@@ -11,6 +11,33 @@ This repo uses a `justfile` (<https://github.com/casey/just>) to provide a consi
 
 Some `just` recipes will offer to install missing tools (for example Node/pnpm/Docker) and will fail if you choose not to install them.
 
+## Dev Container
+
+With Docker and the VS Code Dev Containers extension installed, open the repository
+and run **Dev Containers: Reopen in Container**. The container includes stable Rust,
+rustfmt, Clippy, SQLx CLI, Node.js 26, and the repository's pinned pnpm version.
+A separate PostgreSQL 18.2 service starts automatically; setup applies the database
+migrations and installs frontend dependencies. The first build can take several
+minutes while SQLx CLI compiles.
+
+Start the API and frontend in separate container terminals:
+
+```bash
+cd api && cargo run --bin ferriskey-api
+```
+
+```bash
+pnpm --dir front run dev --host 0.0.0.0
+```
+
+The API and console are forwarded to <http://localhost:3333> and
+<http://localhost:5555>. The container provides database and server environment
+variables, so copying `.env` files or running `just dev-setup` is unnecessary.
+The database persists in a dedicated Docker volume and is not published to the
+host. To apply later migrations, run `sqlx migrate run --source core/migrations`
+from the repository root. Run backend unit tests with `cargo test --workspace
+--exclude ferriskey-client --locked`.
+
 ## Discover Commands
 
 List all available recipes:
